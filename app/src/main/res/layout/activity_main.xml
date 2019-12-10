@@ -6,7 +6,74 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <TextClock
+    <LinearLayout
+        android:id="@+id/containerFenceNum"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_margin"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="@id/containerFenceNum"
+        tools:layout_editor_absoluteX="0dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="@string/fence_num"
+            android:textColor="@android:color/black"
+            android:textSize="20sp" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:orientation="vertical">
+
+            <Spinner
+                android:id="@+id/spinnerFenceNum"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="@dimen/activity_margin"
+                android:spinnerMode="dropdown" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/container_division"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_margin"
+        android:orientation="horizontal"
+        app:layout_constraintLeft_toRightOf="@id/containerFenceNum"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="@string/division"
+            android:textColor="@android:color/black"
+            android:textSize="20sp" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:orientation="vertical">
+
+            <Spinner
+                android:id="@+id/spinner_division"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingRight="@dimen/activity_margin"
+                android:spinnerMode="dropdown" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <!--<TextClock
         android:id="@+id/textClock"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -16,9 +83,8 @@
         android:format12Hour="hh:mm:ss a"
         android:gravity="end"
         android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@id/containerFenceNum" />  -->
 
     <EditText
         android:id="@+id/numberEntered"
@@ -32,7 +98,7 @@
         android:inputType="number"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textClock">
+        app:layout_constraintTop_toBottomOf="@id/containerFenceNum">
 
         <requestFocus
             android:layout_width="wrap_content"
