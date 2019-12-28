@@ -7,47 +7,13 @@
     tools:context=".MainActivity">
 
     <LinearLayout
-        android:id="@+id/containerFenceNum"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/activity_margin"
-        android:orientation="horizontal"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="@id/containerFenceNum"
-        tools:layout_editor_absoluteX="0dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:text="@string/fence_num"
-            android:textColor="@android:color/black"
-            android:textSize="20sp" />
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:orientation="vertical">
-
-            <Spinner
-                android:id="@+id/spinnerFenceNum"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingEnd="@dimen/activity_margin"
-                android:spinnerMode="dropdown" />
-
-        </LinearLayout>
-    </LinearLayout>
-
-    <LinearLayout
         android:id="@+id/container_division"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/activity_margin"
         android:orientation="horizontal"
-        app:layout_constraintLeft_toRightOf="@id/containerFenceNum"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent" >
 
         <TextView
             android:layout_width="wrap_content"
@@ -68,6 +34,40 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingRight="@dimen/activity_margin"
+                android:spinnerMode="dropdown" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/containerFenceNum"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_margin"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toTopOf="@id/container_division"
+        app:layout_constraintLeft_toLeftOf="parent" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/activity_margin"
+            android:layout_marginTop="@dimen/half_margin"
+            android:text="@string/fence_num"
+            android:textColor="@android:color/black"
+            android:textSize="20sp" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:orientation="vertical">
+
+            <Spinner
+                android:id="@+id/spinnerFenceNum"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="@dimen/activity_margin"
                 android:spinnerMode="dropdown" />
 
         </LinearLayout>
@@ -110,7 +110,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/activity_margin"
-        android:layout_marginTop="@dimen/activity_margin"
+        android:layout_marginTop="@dimen/half_margin"
         android:text="@string/jumped_clear"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/numberEntered" />
@@ -121,11 +121,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/double_margin"
-        android:layout_marginTop="@dimen/activity_margin"
+        android:layout_marginTop="@dimen/half_margin"
         android:text="@string/refusal"
         app:layout_constraintStart_toEndOf="@id/jumpedClear"
         app:layout_constraintTop_toBottomOf="@id/numberEntered" />
 
+    <TextView
+        android:id="@+id/refusalText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/activity_margin"
+        android:layout_marginTop="@dimen/half_margin"
+        app:layout_constraintStart_toEndOf="@id/refusal"
+        app:layout_constraintTop_toBottomOf="@id/numberEntered" />
 
     <LinearLayout
         android:id="@+id/containerOther"
@@ -165,7 +173,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/activity_margin"
-        android:layout_marginTop="@dimen/activity_margin"
+        android:layout_marginTop="@dimen/half_margin"
         android:text="@string/hold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/containerOther" />
@@ -175,7 +183,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/double_margin"
-        android:layout_marginTop="@dimen/activity_margin"
+        android:layout_marginTop="@dimen/half_margin"
         android:format="%m%s"
         android:textSize="24sp"
         app:layout_constraintStart_toEndOf="@+id/hold"
@@ -186,7 +194,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/activity_margin"
-        android:layout_marginTop="@dimen/activity_margin"
+        android:layout_marginTop="@dimen/half_margin"
         android:text="@string/seven"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/hold" />
@@ -196,7 +204,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="2dp"
-        android:layout_marginTop="@dimen/activity_margin"
+        android:layout_marginTop="@dimen/half_margin"
         android:layout_marginEnd="2dp"
         android:text="@string/eight"
         app:layout_constraintEnd_toStartOf="@id/button9"
@@ -207,7 +215,7 @@
         android:id="@+id/button9"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/activity_margin"
+        android:layout_marginTop="@dimen/half_margin"
         android:layout_marginEnd="@dimen/activity_margin"
         android:text="@string/nine"
         app:layout_constraintEnd_toEndOf="parent"
@@ -311,7 +319,7 @@
 
 
     <Button
-        android:id="@+id/buttonStart"
+        android:id="@+id/buttonEnter"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/activity_margin"
