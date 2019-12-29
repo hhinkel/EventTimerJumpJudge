@@ -21,11 +21,22 @@
     <string name="fence_num">Fence: </string>
     <string name="division">Division:</string>
 
+
     <string-array name="array_division_options">
         <item>Novice</item>
         <item>Beginner Novice</item>
         <item>Advanced Elementary</item>
         <item>Elementary</item>
         <item>Division Unknown</item>
+    </string-array>
+
+    <string-array name="array_other_options">
+        <item>None</item>
+        <item>Withdraw</item>
+        <item>Rider Fall</item>
+        <item>Horse Fall</item>
+        <item>Technical Elimination</item>
+        <item>Flag Fault</item>
+        <item>Frangible Pin</item>
     </string-array>
 </resources>

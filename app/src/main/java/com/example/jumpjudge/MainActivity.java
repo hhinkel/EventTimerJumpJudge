@@ -39,10 +39,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Spinner fenceSpinner;
     private String fence;
 
+    private Spinner otherSpinner;
+    private String other;
+
     private static final int PERMISSION_REQUEST_CODE = 100;
     private boolean permissionGranted;
 
-    private int refusals;
+    private int refusals = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,12 +82,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         divisionSpinner = findViewById(R.id.spinner_division);
         fenceSpinner = findViewById(R.id.spinnerFenceNum);
 
-        for (int i = 0; i < 13; i++) {
+        for (int i = 0; i < 16; i++) {
             btn[i].setOnClickListener(this);
         }
 
         setupDivisionSpinner();
         setupFenceSpinner();
+        setupOtherSpinner();
     }
 
      @Override
@@ -133,11 +137,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     e.printStackTrace();
                 }
                 refusals = 0;
-                refusalTextView.setText(refusals);
+                refusalTextView.setText(Integer.toString(refusals));
                 break;
             case R.id.refusal:
                 refusals = refusals + 1;
-                refusalTextView.setText(refusals);
+                refusalTextView.setText(Integer.toString(refusals));
                 break;
             case R.id.hold:
                 break;
@@ -202,6 +206,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
 
+    private void setupOtherSpinner() {
+        ArrayAdapter otherSpinnerAdapter = ArrayAdapter.createFromResource(this,
+                R.array.array_other_options, android.R.layout.simple_spinner_item);
+
+        otherSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+
+        otherSpinner.setAdapter(otherSpinnerAdapter);
+
+        otherSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selection = (String) parent.getItemAtPosition(position);
+                if (!TextUtils.isEmpty(selection)) {
+                    other = selection;
+                } else {
+                    other = "Division Unknown";
+                }
+            }
+            public void onNothingSelected(AdapterView<?> parent) {
+                division = "None";
+            }
+        });
+    }
+
     public void addToArray(String number) {
         userInput = findViewById(R.id.numberEntered);
         userInput.append(number);
@@ -244,9 +272,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void processNumber(String input, Calendar now, long finishTime) {
-        /* Context context = getApplicationContext();
-        showTimeNumber(context, input, now);
-        Rider rider = saveRiderData(input, finishTime);
+        Context context = getApplicationContext();
+        showTimeNumber(context, input, now, refusals);
+        /*Rider rider = saveRiderData(input, finishTime);
         insertRider(rider);
         //TODO: Encrypt data
         MqttHelper mqttHelper = new MqttHelper(context);
@@ -254,10 +282,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mqttHelper.connect(msg); */
     }
 
-    public void showTimeNumber(Context context, String number, Calendar now) {
+    public void showTimeNumber(Context context, String number, Calendar now, int refusals) {
         SimpleDateFormat format = new SimpleDateFormat("hh:mm:ss:SS", Locale.getDefault());
-        Date finishTime = now.getTime();
-        CharSequence text = "Rider: " + number + " Finish Time: " + format.format(finishTime);
+        Date jumpTime = now.getTime();
+        CharSequence text = "Rider: " + number + " Refusals: " + refusals + " Time: " + format.format(jumpTime);
         int duration = Toast.LENGTH_LONG;
         Toast toast = Toast.makeText(context, text, duration);
         toast.setGravity(Gravity.CENTER, 0, 0);
