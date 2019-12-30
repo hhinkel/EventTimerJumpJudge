@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Chronometer;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
@@ -44,6 +45,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private static final int PERMISSION_REQUEST_CODE = 100;
     private boolean permissionGranted;
+
+    private boolean timerRunning = false;
+    private Chronometer timer;
+    private long holdTime;
 
     private int refusals = 0;
 
@@ -81,6 +86,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         divisionSpinner = findViewById(R.id.spinner_division);
         fenceSpinner = findViewById(R.id.spinnerFenceNum);
+        otherSpinner = findViewById(R.id.spinnerOther);
+        timer = findViewById(R.id.timer);
 
         for (int i = 0; i < 16; i++) {
             btn[i].setOnClickListener(this);
@@ -144,6 +151,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 refusalTextView.setText(Integer.toString(refusals));
                 break;
             case R.id.hold:
+                holdClicked();
                 break;
             case R.id.buttonClear:
                 clearNumber(userInput);
@@ -312,5 +320,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
         showSoftNumPad(dialogView); */
+    }
+
+    public void holdClicked() {
+        if(timerRunning) {
+            timer.stop();
+            holdTime = timer.getBase();
+            timerRunning = false;
+        }
+        else {
+            timer.start();
+            timerRunning = true;
+        }
     }
 }
