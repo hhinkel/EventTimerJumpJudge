@@ -4,16 +4,20 @@ public final class Rider {
     private int riderNumber;
     private String division;
     private int fenceNumber;
-    private long startTime;
-    private long finishTime;
+    private int refusals;
+    private long jumpTime;
+    private String other;
+    private long holdTime;
     private String edit;
 
-    Rider(int riderNumber, String division, int fenceNumber, long startTime, long finishTime, String edit) {
+    Rider(int riderNumber, String division, int fenceNumber, int refusals, long jumpTime, String other, long holdTime, String edit) {
         this.riderNumber = riderNumber;
         this.division = division;
         this.fenceNumber = fenceNumber;
-        this.startTime = startTime;
-        this.finishTime = finishTime;
+        this.refusals = refusals;
+        this.jumpTime = jumpTime;
+        this.other = other;
+        this.holdTime = holdTime;
         this.edit = edit;
     }
 
@@ -25,13 +29,17 @@ public final class Rider {
 
     public int getFenceNumber () { return fenceNumber; }
 
-    public long getStartTime() {
-        return startTime;
+    public int getRefusals () { return refusals; }
+
+    public long getJumpTime() {
+        return jumpTime;
     }
 
-    public long getFinishTime() {
-        return finishTime;
+    public String getOther() {
+        return other;
     }
+
+    public long getHoldTime() { return holdTime; }
 
     public String getEdit() { return edit; }
 }

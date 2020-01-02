@@ -2,9 +2,12 @@ package com.example.jumpjudge;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -269,25 +272,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void enterNumber(EditText input) throws MqttException, UnsupportedEncodingException {
         Calendar now = Calendar.getInstance();
-        long finishTime = now.getTimeInMillis();
+        long jumpTime = now.getTimeInMillis();
 
         if (input == null) {
-            showNumberErrorDialog(now, finishTime);
+            showNumberErrorDialog(now, jumpTime);
         } else {
-            processNumber(input.getText().toString(), now, finishTime);
+            processNumber(input.getText().toString(), now, jumpTime);
             clearNumber(userInput);
         }
     }
 
-    private void processNumber(String input, Calendar now, long finishTime) {
+    private void processNumber(String input, Calendar now, long jumpTime) {
         Context context = getApplicationContext();
         showTimeNumber(context, input, now, refusals);
-        /*Rider rider = saveRiderData(input, finishTime);
+        Rider rider = saveRiderData(input, jumpTime);
         insertRider(rider);
         //TODO: Encrypt data
         MqttHelper mqttHelper = new MqttHelper(context);
         String msg = createMessageString(rider);
-        mqttHelper.connect(msg); */
+        mqttHelper.connect(msg);
     }
 
     public void showTimeNumber(Context context, String number, Calendar now, int refusals) {
@@ -300,7 +303,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         toast.show();
     }
 
-    public void showNumberErrorDialog(final Calendar now, final long finishTime) {
+    public Rider saveRiderData(String number, long jumpTime) {
+        int num = Integer.parseInt(number);
+        return new Rider(num, division, Integer.parseInt(fence), refusals, jumpTime, other, holdTime, null);
+    }
+
+    private void insertRider(Rider rider) {
+
+        ContentValues values = new ContentValues();
+        values.put(RiderContract.RiderEntry.COLUMN_RIDER_NUM, rider.getRiderNumber());
+        values.put(RiderContract.RiderEntry.COLUMN_DIVISION, rider.getDivision());
+        values.put(RiderContract.RiderEntry.COLUMN_FENCE_NUM, rider.getFenceNumber());
+        values.put(RiderContract.RiderEntry.COLUMN_RIDER_REFUSALS, rider.getRefusals());
+        values.put(RiderContract.RiderEntry.COLUMN_RIDER_TIME, rider.getJumpTime());
+        values.put(RiderContract.RiderEntry.COLUMN_RIDER_OTHER, rider.getOther());
+        values.put(RiderContract.RiderEntry.COLUMN_RIDER_HOLD, rider.getHoldTime());
+        values.put(RiderContract.RiderEntry.COLUMN_EDIT, rider.getEdit());
+
+        Uri newUri = getContentResolver().insert(RiderContract.RiderEntry.CONTENT_URI, values);
+        Log.v("MainActivity", newUri + " value of newUri");
+    }
+
+    private String createMessageString(Rider rider) {
+
+        return rider.getRiderNumber() + "," + rider.getDivision() + "," + rider.getFenceNumber()
+                + "," + rider.getRefusals() + "," + rider.getJumpTime() + "," + rider.getOther()
+                + "," + rider.getHoldTime() + "," + rider.getEdit();
+    }
+
+    public void showNumberErrorDialog(final Calendar now, final long jumpTime) {
         /* AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
         final View dialogView = inflater.inflate(R.layout.layout_popup, null);
@@ -313,7 +344,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         builder.setPositiveButton("Enter", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                processNumber(userInput.getText().toString(), now, finishTime);
+                processNumber(userInput.getText().toString(), now, jumpTime);
                 clearNumber(userInput);
             }
         });
