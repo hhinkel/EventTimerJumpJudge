@@ -5,4 +5,5 @@
     <dimen name="activity_margin">16dp</dimen>
     <dimen name="double_margin">32dp</dimen>
     <dimen name="screen_width">410dp</dimen>
+    <dimen name="fence_padding">10dp</dimen>
 </resources>

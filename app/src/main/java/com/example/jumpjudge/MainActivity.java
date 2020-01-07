@@ -171,7 +171,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void setupDivisionSpinner() {
         ArrayAdapter divisionSpinnerAdapter = ArrayAdapter.createFromResource(this,
-                R.array.array_division_options, android.R.layout.simple_spinner_item);
+                R.array.array_division_options, R.layout.division_spinner_item);
 
         divisionSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
 
@@ -199,7 +199,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         for (int i = 1; i < 40; i++)
             fenceList.add(Integer.toString(i));
 
-        ArrayAdapter fenceSpinnerAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, fenceList);
+        ArrayAdapter fenceSpinnerAdapter = new ArrayAdapter(this, R.layout.fence_spinner_item, fenceList);
 
         fenceSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
 
@@ -223,7 +223,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void setupOtherSpinner() {
         ArrayAdapter otherSpinnerAdapter = ArrayAdapter.createFromResource(this,
-                R.array.array_other_options, android.R.layout.simple_spinner_item);
+                R.array.array_other_options, R.layout.other_spinner_item);
 
         otherSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
 
