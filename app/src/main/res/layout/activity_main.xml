@@ -106,7 +106,7 @@
             android:layout_height="wrap_content" />
     </EditText>
 
-    <Button
+    <!-- <Button
         android:id="@+id/jumpedClear"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -114,7 +114,7 @@
         android:layout_marginTop="@dimen/half_margin"
         android:text="@string/jumped_clear"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/numberEntered" />
+        app:layout_constraintTop_toBottomOf="@id/numberEntered" />  -->
 
 
     <Button
@@ -124,7 +124,7 @@
         android:layout_marginStart="@dimen/double_margin"
         android:layout_marginTop="@dimen/half_margin"
         android:text="@string/refusal"
-        app:layout_constraintStart_toEndOf="@id/jumpedClear"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/numberEntered" />
 
     <TextView
@@ -327,7 +327,7 @@
         android:layout_marginStart="@dimen/activity_margin"
         android:layout_marginTop="@dimen/double_margin"
         android:layout_marginEnd="@dimen/activity_margin"
-        android:text="@string/enter"
+        android:text="@string/jumped_clear"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

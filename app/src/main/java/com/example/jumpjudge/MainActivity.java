@@ -87,16 +87,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btn[10] = findViewById(R.id.buttonBack);
         btn[11] = findViewById(R.id.buttonClear);
         btn[12] = findViewById(R.id.buttonEnter);
-        btn[13] = findViewById(R.id.jumpedClear);
-        btn[14] = findViewById(R.id.refusal);
-        btn[15] = findViewById(R.id.hold);
+        btn[13] = findViewById(R.id.refusal);
+        btn[14] = findViewById(R.id.hold);
 
         divisionSpinner = findViewById(R.id.spinner_division);
         fenceSpinner = findViewById(R.id.spinnerFenceNum);
         otherSpinner = findViewById(R.id.spinnerOther);
         timer = findViewById(R.id.timer);
 
-        for (int i = 0; i < 16; i++) {
+        for (int i = 0; i < 15; i++) {
             btn[i].setOnClickListener(this);
         }
 
@@ -141,7 +140,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.button9:
                 addToArray("9");
                 break;
-            case R.id.jumpedClear:
             case R.id.buttonEnter:
                 try {
                     enterNumber(userInput);
@@ -152,10 +150,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 refusals = 0;
                 refusalTextView.setText(Integer.toString(refusals));
+                changeEnterBtnText("Jumped Clear", btn[12]);
                 break;
             case R.id.refusal:
                 refusals = refusals + 1;
-                refusalTextView.setText(Integer.toString(refusals));
+                refusalTextView.setText(String.format("%d",refusals));
+                changeEnterBtnText("Enter", btn[12]);
                 break;
             case R.id.hold:
                 holdClicked();
@@ -167,6 +167,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 goBackAChar(userInput);
                 break;
         }
+    }
+
+    private void changeEnterBtnText (String text, Button btn) {
+        btn.setText(text);
     }
 
     private void setupDivisionSpinner() {
@@ -216,7 +220,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
             public void onNothingSelected(AdapterView<?> parent) {
-                division = "Fence Unknown";
+                fence = "Fence Unknown";
             }
         });
     }
@@ -236,11 +240,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (!TextUtils.isEmpty(selection)) {
                     other = selection;
                 } else {
-                    other = "Division Unknown";
+                    other = "None";
                 }
             }
             public void onNothingSelected(AdapterView<?> parent) {
-                division = "None";
+                other = "None";
             }
         });
     }
