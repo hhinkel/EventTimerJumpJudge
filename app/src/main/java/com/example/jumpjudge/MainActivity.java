@@ -296,6 +296,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else {
             processNumber(input.getText().toString(), now, jumpTime);
             clearNumber(userInput);
+            timer.setBase(SystemClock.elapsedRealtime());
         }
     }
 
