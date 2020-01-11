@@ -239,6 +239,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 String selection = (String) parent.getItemAtPosition(position);
                 if (!TextUtils.isEmpty(selection)) {
                     other = selection;
+                    if(!other.equals("None"))
+                        changeEnterBtnText("Enter", btn[12]);
                 } else {
                     other = "None";
                 }
