@@ -1,5 +1,6 @@
 package com.example.jumpjudge;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -8,6 +9,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
@@ -39,7 +41,7 @@ import java.util.Locale;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     //Global Variables
-    Button[] btn = new Button[16];
+    Button[] btn = new Button[17];
     EditText userInput;
 
     private Spinner divisionSpinner;
@@ -90,13 +92,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btn[12] = findViewById(R.id.buttonEnter);
         btn[13] = findViewById(R.id.refusal);
         btn[14] = findViewById(R.id.hold);
+        btn[15] = findViewById(R.id.clearHold);
 
         divisionSpinner = findViewById(R.id.spinner_division);
         fenceSpinner = findViewById(R.id.spinnerFenceNum);
         otherSpinner = findViewById(R.id.spinnerOther);
         timer = findViewById(R.id.timer);
 
-        for (int i = 0; i < 15; i++) {
+        for (int i = 0; i < 16; i++) {
             btn[i].setOnClickListener(this);
         }
 
@@ -151,15 +154,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 refusals = 0;
                 refusalTextView.setText(Integer.toString(refusals));
-                changeEnterBtnText("Jumped Clear", btn[12]);
+                changeBtnText("Jumped Clear", btn[12]);
                 break;
             case R.id.refusal:
                 refusals = refusals + 1;
                 refusalTextView.setText(String.format("%d",refusals));
-                changeEnterBtnText("Enter", btn[12]);
+                changeBtnText("Enter", btn[12]);
                 break;
             case R.id.hold:
                 holdClicked();
+                break;
+            case R.id.clearHold:
+                clearHold();
                 break;
             case R.id.buttonClear:
                 clearNumber(userInput);
@@ -170,7 +176,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void changeEnterBtnText (String text, Button btn) {
+    private void changeBtnText (String text, Button btn) {
         btn.setText(text);
     }
 
@@ -241,7 +247,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (!TextUtils.isEmpty(selection)) {
                     other = selection;
                     if(!other.equals("None"))
-                        changeEnterBtnText("Enter", btn[12]);
+                        changeBtnText("Enter", btn[12]);
                 } else {
                     other = "None";
                 }
@@ -375,17 +381,47 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if(timerRunning) {
             timer.stop();
             holdTime = timer.getBase();
+            changeBtnText("Hold", btn[14]);
             timerRunning = false;
         }
         else {
+            timer.setBase(SystemClock.elapsedRealtime());
             timer.start();
+            changeBtnText("reStart", btn[14]);
             timerRunning = true;
         }
+    }
+
+    public void clearHold() {
+        if(timerRunning) {
+            timer.stop();
+            changeBtnText("Hold", btn[14]);
+        }
+        timer.setBase(SystemClock.elapsedRealtime());
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (userInput != null) {
+            outState.putString("number", userInput.getText().toString());
+            outState.putString("division", division);
+            outState.putString("fence", fence);
+            outState.putString("other", other);
+            outState.putString("hold", String.format("%d", timer.getBase()));
+        }
+    }
+
+    @Override
+    public void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        holdTime = Long.parseLong(savedInstanceState.getString("hold"));
+        timer.setBase(holdTime);
     }
 }

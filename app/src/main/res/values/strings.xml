@@ -16,6 +16,7 @@
     <string name="jumped_clear">Jumped Clear</string>
     <string name="refusal">Refusal</string>
     <string name="hold">Hold</string>
+    <string name="clear_hold">Clear Hold</string>
     <string name="other">Other:</string>
     <string name="enter">Enter</string>
     <string name="fence_num">Fence: </string>
