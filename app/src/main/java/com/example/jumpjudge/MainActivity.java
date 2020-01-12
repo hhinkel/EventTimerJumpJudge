@@ -57,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private boolean permissionGranted;
 
     private boolean timerRunning = false;
+    private boolean timerHasRun = false;
     private Chronometer timer;
     private long holdTime;
 
@@ -108,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setupOtherSpinner();
     }
 
-     @Override
+    @Override
     public void onClick(View view) {
 
         TextView refusalTextView = findViewById(R.id.refusalText);
@@ -154,11 +155,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 refusals = 0;
                 refusalTextView.setText(Integer.toString(refusals));
+                changeOtherSelectionNone();
                 changeBtnText("Jumped Clear", btn[12]);
                 break;
             case R.id.refusal:
                 refusals = refusals + 1;
-                refusalTextView.setText(String.format("%d",refusals));
+                refusalTextView.setText(String.format("%d", refusals));
                 changeBtnText("Enter", btn[12]);
                 break;
             case R.id.hold:
@@ -176,8 +178,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void changeBtnText (String text, Button btn) {
+    private void changeBtnText(String text, Button btn) {
         btn.setText(text);
+    }
+
+    private void changeOtherSelectionNone () {
+        otherSpinner.setSelection(0);
     }
 
     private void setupDivisionSpinner() {
@@ -198,6 +204,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     division = "Division Unknown";
                 }
             }
+
             public void onNothingSelected(AdapterView<?> parent) {
                 division = "Division Unknown";
             }
@@ -226,6 +233,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     fence = "Fence Unknown";
                 }
             }
+
             public void onNothingSelected(AdapterView<?> parent) {
                 fence = "Fence Unknown";
             }
@@ -246,12 +254,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 String selection = (String) parent.getItemAtPosition(position);
                 if (!TextUtils.isEmpty(selection)) {
                     other = selection;
-                    if(!other.equals("None"))
+                    if (!other.equals("None"))
                         changeBtnText("Enter", btn[12]);
                 } else {
                     other = "None";
                 }
             }
+
             public void onNothingSelected(AdapterView<?> parent) {
                 other = "None";
             }
@@ -379,22 +388,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void holdClicked() {
-        if(timerRunning) {
+        if (timerRunning) {
             timer.stop();
-            holdTime = timer.getBase();
+            holdTime = SystemClock.elapsedRealtime() - timer.getBase();
             changeBtnText("Hold", btn[14]);
+            timerHasRun = true;
             timerRunning = false;
-        }
-        else {
+        } else {
             timer.setBase(SystemClock.elapsedRealtime());
             timer.start();
             changeBtnText("reStart", btn[14]);
+            timerHasRun = false;
             timerRunning = true;
         }
     }
 
     public void clearHold() {
-        if(timerRunning) {
+        if (timerRunning) {
             timer.stop();
             changeBtnText("Hold", btn[14]);
         }
@@ -412,17 +422,37 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onSaveInstanceState(outState);
         if (userInput != null) {
             outState.putString("number", userInput.getText().toString());
-            outState.putString("division", division);
-            outState.putString("fence", fence);
             outState.putString("other", other);
-            outState.putString("hold", String.format("%d", timer.getBase()));
         }
+        outState.putString("division", division);
+        outState.putString("holdBtn", btn[14].getText().toString());
+        outState.putString("fence", fence);
+        outState.putBoolean("timerRunning", timerRunning);
+        outState.putBoolean("timerHasRun", timerHasRun);
+        outState.putLong("hold", timer.getBase());
+        outState.putLong("holdTime", holdTime);
+        Chronometer screenTimer = findViewById(R.id.timer);
+        outState.putCharSequence("screenTime", screenTimer.getText());
     }
 
     @Override
-    public void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        holdTime = Long.parseLong(savedInstanceState.getString("hold"));
-        timer.setBase(holdTime);
+        holdTime = savedInstanceState.getLong("holdTime");
+        timerRunning = savedInstanceState.getBoolean("timerRunning");
+        timerHasRun = savedInstanceState.getBoolean("timerHasRun");
+        long time = savedInstanceState.getLong("hold");
+        long sysTime = SystemClock.elapsedRealtime();
+        CharSequence screenTime = savedInstanceState.getCharSequence("screenTime");
+        changeBtnText(savedInstanceState.getString("holdBtn"), btn[14]);
+        if (timerRunning) {
+            timer.setBase(time);
+            timer.start();
+        } else if (timerHasRun) {
+            Chronometer screenTimer = findViewById(R.id.timer);
+            screenTimer.setText(screenTime);
+        } else {
+            timer.setBase(sysTime);
+        }
     }
 }
