@@ -2,6 +2,7 @@ package com.example.jumpjudge;
 
 import android.content.Context;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -17,6 +18,8 @@ public class Utils {
 
     public static String username;
     public static String key;
+
+    public static Division[] divisions;
 
     public void loadJSONSetupData(Context context) {
         String json = null;
@@ -38,8 +41,24 @@ public class Utils {
             subscriptionTopic = jsonObject.getString("subscriptionTopic");
             username = jsonObject.getString("username");
             key = jsonObject.getString("key");
+            JSONArray divisionData = jsonObject.getJSONArray("divisions");
+            createDivisionArrays(divisionData);
         } catch (JSONException error) {
             error.printStackTrace();
         }
     }
+
+    private void createDivisionArrays(JSONArray data) {
+        divisions = new Division[data.length()];
+        for(int i = 0; i < data.length(); i++) {
+            try {
+                JSONObject object = data.getJSONObject(i);
+                divisions[i] = new Division(object.getString("division"), object.getInt("fences"), object.getInt("riders"));
+            } catch (JSONException error) {
+                error.printStackTrace();
+            }
+        }
+    }
+
+    public Division[] getDivisions () { return divisions; }
 }

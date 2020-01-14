@@ -187,8 +187,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void setupDivisionSpinner() {
-        ArrayAdapter divisionSpinnerAdapter = ArrayAdapter.createFromResource(this,
-                R.array.array_division_options, R.layout.division_spinner_item);
+
+        String[] divisions = getDivisions();
+
+        //ArrayAdapter divisionSpinnerAdapter = ArrayAdapter.createFromResource(this,
+                //R.array.array_division_options, R.layout.division_spinner_item);
+        ArrayAdapter divisionSpinnerAdapter = new ArrayAdapter(this, R.layout.division_spinner_item, divisions);
 
         divisionSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
 
@@ -209,6 +213,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 division = "Division Unknown";
             }
         });
+    }
+
+    private String[] getDivisions () {
+        Context context = getApplicationContext();
+        Utils utils = new Utils();
+        utils.loadJSONSetupData(context);
+        Division[] divisions = utils.getDivisions();
+        String[] divisionNames = new String[divisions.length];
+
+        for (int i = 0; i < divisions.length; i++) {
+            divisionNames[i] = divisions[i].getName();
+        }
+
+        return divisionNames;
     }
 
     private void setupFenceSpinner() {
