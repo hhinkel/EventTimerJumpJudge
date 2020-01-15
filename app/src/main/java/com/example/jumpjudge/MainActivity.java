@@ -34,6 +34,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
@@ -46,6 +47,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private Spinner divisionSpinner;
     private String division;
+    private LinkedList<String> divisionIndex;
+    private Division[] divisions;
 
     private Spinner fenceSpinner;
     private String fence;
@@ -190,8 +193,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         String[] divisions = getDivisions();
 
-        //ArrayAdapter divisionSpinnerAdapter = ArrayAdapter.createFromResource(this,
-                //R.array.array_division_options, R.layout.division_spinner_item);
         ArrayAdapter divisionSpinnerAdapter = new ArrayAdapter(this, R.layout.division_spinner_item, divisions);
 
         divisionSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
@@ -204,6 +205,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 String selection = (String) parent.getItemAtPosition(position);
                 if (!TextUtils.isEmpty(selection)) {
                     division = selection;
+                    setupFenceSpinner();
                 } else {
                     division = "Division Unknown";
                 }
@@ -219,20 +221,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Context context = getApplicationContext();
         Utils utils = new Utils();
         utils.loadJSONSetupData(context);
-        Division[] divisions = utils.getDivisions();
+        divisions = utils.getDivisions();
+        divisionIndex = new LinkedList<>();
         String[] divisionNames = new String[divisions.length];
 
         for (int i = 0; i < divisions.length; i++) {
             divisionNames[i] = divisions[i].getName();
+            divisionIndex.add(divisionNames[i]);
         }
+
+        if (division == null)
+            division = divisions[0].getName();
 
         return divisionNames;
     }
 
     private void setupFenceSpinner() {
+        int index = divisionIndex.indexOf(division);
         List<String> fenceList = new ArrayList<String>();
 
-        for (int i = 1; i < 40; i++)
+        int numFences = divisions[index].getFences();
+
+        for (int i = 1; i < numFences + 1; i++)
             fenceList.add(Integer.toString(i));
 
         ArrayAdapter fenceSpinnerAdapter = new ArrayAdapter(this, R.layout.fence_spinner_item, fenceList);
