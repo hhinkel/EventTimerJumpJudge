@@ -8,6 +8,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.LinkedList;
 
 public class Utils {
 
@@ -61,4 +62,21 @@ public class Utils {
     }
 
     public Division[] getDivisions () { return divisions; }
+
+    public String[] getDivisionNames(Context context, String division) {
+        loadJSONSetupData(context);
+        Division[] divisions = getDivisions();
+        LinkedList<String> divisionIndex = new LinkedList<>();
+        String[] divisionNames = new String[divisions.length];
+
+        for (int i = 0; i < divisions.length; i++) {
+            divisionNames[i] = divisions[i].getName();
+            divisionIndex.add(divisionNames[i]);
+        }
+
+        //if (division == null)
+        //    division = divisions[0].getName();
+
+        return divisionNames;
+    }
 }

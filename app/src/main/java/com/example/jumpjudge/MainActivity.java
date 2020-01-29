@@ -216,7 +216,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
 
-    private String[] getDivisions () {
+    /*private String[] getDivisions() {
+        Context context = getApplicationContext();
+        Utils utils = new Utils();
+        return utils.getDivisionNames(context, division);
+
+    } */
+
+     private String[] getDivisions () {
         Context context = getApplicationContext();
         Utils utils = new Utils();
         utils.loadJSONSetupData(context);
