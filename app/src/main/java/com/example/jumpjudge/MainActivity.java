@@ -3,18 +3,27 @@ package com.example.jumpjudge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.SystemClock;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -27,8 +36,13 @@ import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.opencsv.CSVWriter;
+
 import org.eclipse.paho.client.mqttv3.MqttException;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -469,6 +483,217 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
+    }
+
+    private void deleteAllRiders() {
+        int rowsDeleted = getContentResolver().delete(RiderContract.RiderEntry.CONTENT_URI, null, null);
+        Log.v("MainActivity", rowsDeleted + " rows deleted from rider database");
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_view_all_enteries:
+                Intent catalogIntent = new Intent(this, CatalogActivity.class);
+                startActivity(catalogIntent);
+                return true;
+            case R.id.action_delete_all_entries:
+                showDeleteConfirmationDialog();
+                return true;
+            case R.id.action_download_to_computer:
+                showExportConfirmationDialog();
+                return true;
+            case R.id.action_uninstall:
+                showUnistallConfirmationDialog();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void showDeleteConfirmationDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.delete_all_dialog_msg);
+        builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                deleteAllRiders();
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int i) {
+                if (dialog != null)
+                    dialog.dismiss();
+            }
+        });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    private void showExportConfirmationDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.export_all_msg);
+        builder.setPositiveButton(R.string.export, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                exportData();
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int i) {
+                if (dialog != null)
+                    dialog.dismiss();
+            }
+        });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    private void exportData() {
+
+        RiderDbHelper dbHelper = new RiderDbHelper(getApplicationContext());
+
+        String state = Environment.getExternalStorageState();
+        String external = Environment.getExternalStorageDirectory().toString();
+        String fileName = "0" + RiderDbHelper.DATABASE + ".csv";
+
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            if (Build.VERSION.SDK_INT >= 23) {
+                if (checkPermission()) {
+                    fileAsCSV(external, "CrossCountryScoring", fileName, dbHelper);
+                } else {
+                    requestPermission();
+                }
+            } else {
+                fileAsCSV(external, "CrossCountryScoring", fileName, dbHelper);
+            }
+        }
+    }
+
+    private void fileAsCSV(String rootPath, String newFolder, String fileName, RiderDbHelper dbHelper) {
+
+        File path = checkForDir(rootPath, newFolder);
+
+        File csvFile = new File(path, fileName);
+        if (!csvFile.exists()) {
+            createCSVFile(dbHelper, csvFile);
+        } else {
+            if(csvFile.lastModified() < Calendar.DATE) {
+                csvFile.delete();
+                createCSVFile(dbHelper, csvFile);
+            } else {
+                showFileDeleteErrorDialog();
+            }
+        }
+    }
+
+    private File checkForDir(String rootPath, String addPath) {
+        File newPath = new File(rootPath, addPath);
+        if (!newPath.exists()) {
+            newPath.mkdirs();
+        }
+        return newPath;
+    }
+
+    private void createCSVFile (RiderDbHelper dbHelper, File file) {
+        Log.d("MainActivity.file", file.toString());
+        try {
+            FileOutputStream output = new FileOutputStream(file);
+            CSVWriter csvWrite = new CSVWriter(new FileWriter(file));
+            writeCSVFile(dbHelper, file, csvWrite);
+            output.flush();
+            output.close();
+            csvWrite.close();
+        } catch (Exception ex) {
+            Log.e("MainActivity.file", ex.getMessage(), ex);
+        }
+    }
+
+    private void writeCSVFile(RiderDbHelper dbHelper, File file, CSVWriter csvWrite) {
+
+        try {
+            file.createNewFile();
+            SQLiteDatabase db = dbHelper.getReadableDatabase();
+            Cursor cursor = db.rawQuery("SELECT * FROM "
+                    + RiderContract.RiderEntry.TABLE_NAME, null);
+            csvWrite.writeNext(cursor.getColumnNames());
+            while (cursor.moveToNext()) {
+                String[] columnArray = {cursor.getString(0), cursor.getString(1),
+                        cursor.getString(2), cursor.getString(3), cursor.getString(4),
+                        cursor.getString(5), cursor.getString(6)};
+                csvWrite.writeNext(columnArray);
+            }
+            cursor.close();
+        } catch (Exception ex) {
+            Log.e("MainActivity.csv", ex.getMessage(), ex);
+        }
+    }
+
+    private void showUnistallConfirmationDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.uninstall_msg);
+        builder.setPositiveButton(R.string.uninstall, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                uninstallApp();
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int i) {
+                if (dialog != null)
+                    dialog.dismiss();
+            }
+        });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    private void uninstallApp() {
+        Intent intent = new Intent(Intent.ACTION_DELETE);
+        intent.setData(Uri.parse("package:com.example.eventtimerstart"));
+        startActivity(intent);
+    }
+
+    private boolean checkPermission() {
+        int result = ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        return result == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void requestPermission() {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            Toast.makeText(MainActivity.this, "Write External Storage permission allows us to save files. Please allow this permission in App Settings.", Toast.LENGTH_LONG).show();
+        } else {
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_REQUEST_CODE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    permissionGranted = true;
+                } else {
+                    permissionGranted = false;
+                }
+                break;
+        }
+    }
+
+    public void showFileDeleteErrorDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.cannot_delete_file_msg);
+        builder.setNegativeButton(R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int i) {
+                if (dialog != null)
+                    dialog.dismiss();
+            }
+        });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
 
     @Override
