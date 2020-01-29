@@ -26,6 +26,11 @@
     <string name="action_delete_all_entries">Delete Entered Data</string>
     <string name="action_download">Export Entered Data</string>
     <string name="action_uninstall">Uninstall</string>
+    <string name="empty_view_title_text">No Riders yet</string>
+    <string name="empty_view_subtitle_text">Nope</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete_all_dialog_msg">Are you sure you want to delete all riders?</string>
 
     <string-array name="array_other_options">
         <item>None</item>

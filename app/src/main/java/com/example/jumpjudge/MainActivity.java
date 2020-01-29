@@ -50,6 +50,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private LinkedList<String> divisionIndex;
     private Division[] divisions;
 
+    TextView refusalTextView;
+
     private Spinner fenceSpinner;
     private String fence;
 
@@ -100,6 +102,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         divisionSpinner = findViewById(R.id.spinner_division);
         fenceSpinner = findViewById(R.id.spinnerFenceNum);
+        refusalTextView = findViewById(R.id.refusalText);
         otherSpinner = findViewById(R.id.spinnerOther);
         timer = findViewById(R.id.timer);
 
@@ -114,8 +117,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
-
-        TextView refusalTextView = findViewById(R.id.refusalText);
 
         switch (view.getId()) {
             case R.id.button0:
@@ -156,10 +157,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 } catch (MqttException e) {
                     e.printStackTrace();
                 }
-                refusals = 0;
-                refusalTextView.setText(Integer.toString(refusals));
-                changeOtherSelectionNone();
-                changeBtnText("Jumped Clear", btn[12]);
+                clearScreenData();
                 break;
             case R.id.refusal:
                 refusals = refusals + 1;
@@ -174,6 +172,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.buttonClear:
                 clearNumber(userInput);
+                clearScreenData();
                 break;
             case R.id.buttonBack:
                 goBackAChar(userInput);
@@ -300,6 +299,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         userInput.append(number);
     }
 
+    public void clearScreenData () {
+        refusals = 0;
+        refusalTextView.setText(Integer.toString(refusals));
+        changeOtherSelectionNone();
+        changeBtnText("Jumped Clear", btn[12]);
+        timer.setBase(SystemClock.elapsedRealtime());
+    }
+
     public void clearNumber(EditText input) {
         int sLen = input.length();
 
@@ -333,7 +340,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else {
             processNumber(input.getText().toString(), now, jumpTime);
             clearNumber(userInput);
-            timer.setBase(SystemClock.elapsedRealtime());
+            //timer.setBase(SystemClock.elapsedRealtime());
         }
     }
 
@@ -392,7 +399,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         final View dialogView = inflater.inflate(R.layout.layout_popup, null);
         userInput = dialogView.findViewById(R.id.add_number);
         builder.setView(dialogView);
-
 
         builder.setTitle("Please enter the Rider Number");
         builder.setMessage("Enter Number");
