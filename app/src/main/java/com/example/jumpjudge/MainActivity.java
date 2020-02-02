@@ -230,13 +230,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
 
-    /*private String[] getDivisions() {
-        Context context = getApplicationContext();
-        Utils utils = new Utils();
-        return utils.getDivisionNames(context, division);
-
-    } */
-
      private String[] getDivisions () {
         Context context = getApplicationContext();
         Utils utils = new Utils();
@@ -361,13 +354,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else {
             processNumber(input.getText().toString(), now, jumpTime);
             clearNumber(userInput);
-            //timer.setBase(SystemClock.elapsedRealtime());
         }
     }
 
     private void processNumber(String input, Calendar now, long jumpTime) {
         Context context = getApplicationContext();
-        showTimeNumber(context, input, now, refusals);
+        showTimeNumber(input, now, refusals);
         Rider rider = saveRiderData(input, jumpTime);
         insertRider(rider);
         //TODO: Encrypt data
@@ -376,14 +368,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mqttHelper.connect(msg);
     }
 
-    public void showTimeNumber(Context context, String number, Calendar now, int refusals) {
+    public void showTimeNumber(String number, Calendar now, int refusals) {
         SimpleDateFormat format = new SimpleDateFormat("hh:mm:ss:SS", Locale.getDefault());
         Date jumpTime = now.getTime();
         CharSequence text = "Rider: " + number + " Refusals: " + refusals + " Time: " + format.format(jumpTime);
-        int duration = Toast.LENGTH_LONG;
-        Toast toast = Toast.makeText(context, text, duration);
-        toast.setGravity(Gravity.CENTER, 0, 0);
-        toast.show();
+        showToast(text);
     }
 
     public Rider saveRiderData(String number, long jumpTime) {
@@ -556,7 +545,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         String state = Environment.getExternalStorageState();
         String external = Environment.getExternalStorageDirectory().toString();
-        String fileName = "0" + RiderDbHelper.DATABASE + ".csv";
+        String fileName = fence + RiderDbHelper.DATABASE + ".csv";
 
         if (Environment.MEDIA_MOUNTED.equals(state)) {
             if (Build.VERSION.SDK_INT >= 23) {
@@ -569,6 +558,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 fileAsCSV(external, "CrossCountryScoring", fileName, dbHelper);
             }
         }
+
     }
 
     private void fileAsCSV(String rootPath, String newFolder, String fileName, RiderDbHelper dbHelper) {
@@ -578,14 +568,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         File csvFile = new File(path, fileName);
         if (!csvFile.exists()) {
             createCSVFile(dbHelper, csvFile);
+            showToast("CSV File for " + fence + " Exported");
         } else {
             if(csvFile.lastModified() < Calendar.DATE) {
                 csvFile.delete();
                 createCSVFile(dbHelper, csvFile);
+                showToast("CSV File for " + fence + " Exported");
             } else {
                 showFileDeleteErrorDialog();
             }
         }
+    }
+
+    private void showToast(CharSequence text) {
+        Context context = getApplicationContext();
+        int duration = Toast.LENGTH_LONG;
+        Toast toast = Toast.makeText(context, text, duration);
+        toast.setGravity(Gravity.CENTER, 0, 0);
+        toast.show();
     }
 
     private File checkForDir(String rootPath, String addPath) {
