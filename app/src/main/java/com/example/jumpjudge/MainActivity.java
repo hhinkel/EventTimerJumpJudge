@@ -652,7 +652,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void uninstallApp() {
         Intent intent = new Intent(Intent.ACTION_DELETE);
-        intent.setData(Uri.parse("package:com.example.eventtimerstart"));
+        intent.setData(Uri.parse("package:com.example.jumpjudge"));
         startActivity(intent);
     }
 
