@@ -83,10 +83,8 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
         mDivisionGroup = new RadioGroup(context);
         mDivisionGroup.setOrientation(RadioGroup.VERTICAL);
 
-        //TODO: Get array from json file.
         Utils utils = new Utils();
         mDivisionArray = utils.getDivisionNames(mContext, null);
-        //mDivisionArray = getResources().getStringArray(R.array.array_division_options);
 
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);

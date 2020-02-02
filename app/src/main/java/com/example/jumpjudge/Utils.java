@@ -74,9 +74,6 @@ public class Utils {
             divisionIndex.add(divisionNames[i]);
         }
 
-        //if (division == null)
-        //    division = divisions[0].getName();
-
         return divisionNames;
     }
 }

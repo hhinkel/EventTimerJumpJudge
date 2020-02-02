@@ -29,6 +29,10 @@
             android:parentActivityName=".MainActivity" >
         </activity>
         <activity
+            android:name=".EditorActivity"
+            android:parentActivityName=".CatalogActivity" >
+        </activity>
+        <activity
             android:name=".SettingsActivity"
             android:parentActivityName=".MainActivity" >
         </activity>
