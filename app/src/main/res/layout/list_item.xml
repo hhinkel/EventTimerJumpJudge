@@ -30,6 +30,14 @@
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-medium"
             android:textAppearance="?android:textAppearanceSmall" />
+
+        <TextView
+            android:id="@+id/other"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/holo_red_dark"
+            android:fontFamily="sans-serif-medium"
+            android:textAppearance="?android:textAppearanceSmall" />
     </LinearLayout>
 
     <LinearLayout
@@ -40,6 +48,14 @@
 
         <TextView
             android:id="@+id/summary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:fontFamily="sans-serif-medium"
+            android:textAppearance="?android:textAppearanceSmall" />
+
+        <TextView
+            android:id="@+id/refusals"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="end"
