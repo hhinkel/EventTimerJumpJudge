@@ -34,7 +34,9 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
     private static final int EXISTING_RIDER_LOADER = 0;
     private Uri mCurrentRiderUri;
     private EditText mNumberEditText;
+    private EditText mFenceEditText;
     private String mNumber;
+    private String mFenceNumber;
     private String mOldNumber;
     private String mDivisionString;
     RadioButton[] mDivision;
@@ -45,14 +47,22 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
     private long mJumpTime;
     private String mOther;
     private long mHoldTime;
-    //private long mFinishTime;
     private boolean mRiderHasChanged = false;
+    private boolean mFenceHasChanged = false;
     Context mContext;
 
     private View.OnTouchListener mTouchListener = new View.OnTouchListener() {
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
             mRiderHasChanged = true;
+            return false;
+        }
+    };
+
+    private View.OnTouchListener mFenceTouchListener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+            mFenceHasChanged = true;
             return false;
         }
     };
@@ -72,8 +82,10 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
 
         final LinearLayout layout = findViewById(R.id.item_layout);
         mNumberEditText = findViewById(R.id.edit_rider_number);
+        mFenceEditText = findViewById(R.id.edit_fence_number);
 
         mNumberEditText.setOnTouchListener(mTouchListener);
+        mFenceEditText.setOnTouchListener(mFenceTouchListener);
 
         createRadioGroup(mContext, layout);
 
@@ -104,6 +116,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
 
     private void saveRider() {
         mNumber = mNumberEditText.getText().toString().trim();
+        mFenceNumber = mFenceEditText.getText().toString().trim();
         int index = mDivisionGroup.getCheckedRadioButtonId();
         mDivisionString = mDivisionArray[index];
 
@@ -114,6 +127,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
 
         ContentValues values = new ContentValues();
         values.put(RiderContract.RiderEntry.COLUMN_RIDER_NUM, mNumber);
+        values.put(RiderContract.RiderEntry.COLUMN_FENCE_NUM, mFenceNumber);
         values.put(RiderContract.RiderEntry.COLUMN_DIVISION, mDivisionString);
         values.put(RiderContract.RiderEntry.COLUMN_EDIT, mOldNumber);
 
@@ -248,7 +262,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
 
             mNumber = cursor.getString(riderColumnIndex);
             String division = cursor.getString(divisionColumnIndex);
-            mFenceNum = cursor.getInt(fenceColumnIndex);
+            mFenceNumber = cursor.getString(fenceColumnIndex);
             mRefusals = cursor.getInt(refusalColumnIndex);
             mJumpTime = cursor.getLong(timeColumnIndex);
             mOther = cursor.getString(otherColumnIndex);
@@ -257,6 +271,7 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
 
             //Check the division that is currently associated with the rider.
             mNumberEditText.setText(mNumber);
+            mFenceEditText.setText(mFenceNumber);
             int index = Arrays.asList(mDivisionArray).indexOf(division);
             mDivision[index].setChecked(true);
 
@@ -271,7 +286,9 @@ public class EditorActivity extends AppCompatActivity implements LoaderManager.L
 
     @Override
     public void onLoaderReset(@NonNull Loader<Cursor> loader) {
+
         mNumberEditText.setText("");
+        mFenceEditText.setText("");
     }
 
     private void showUnsavedChangesDialog(DialogInterface.OnClickListener discardButtonClickListener) {

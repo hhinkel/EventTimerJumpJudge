@@ -1,6 +1,7 @@
 package com.example.jumpjudge;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +9,7 @@ import android.widget.CursorAdapter;
 import android.database.Cursor;
 import android.widget.TextView;
 import android.text.format.DateUtils;
+import android.R.color;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -15,6 +17,8 @@ import java.util.Date;
 import java.util.Locale;
 
 import javax.xml.datatype.Duration;
+
+import static androidx.core.content.ContextCompat.getColor;
 
 public class RiderCursorAdapter extends CursorAdapter {
 
@@ -38,6 +42,7 @@ public class RiderCursorAdapter extends CursorAdapter {
 
         int numberColumnIndex = cursor.getColumnIndex(RiderContract.RiderEntry.COLUMN_RIDER_NUM);
         int divisionColumnIndex = cursor.getColumnIndex(RiderContract.RiderEntry.COLUMN_DIVISION);
+        int fenceNumberColumnIndex = cursor.getColumnIndex(RiderContract.RiderEntry.COLUMN_FENCE_NUM);
         int otherColumnIndex = cursor.getColumnIndex(RiderContract.RiderEntry.COLUMN_RIDER_OTHER);
         int timeColumnIndex = cursor.getColumnIndex(RiderContract.RiderEntry.COLUMN_RIDER_TIME);
         int holdColumnIndex = cursor.getColumnIndex(RiderContract.RiderEntry.COLUMN_RIDER_HOLD);
@@ -51,11 +56,16 @@ public class RiderCursorAdapter extends CursorAdapter {
         long jumpTimeRaw = cursor.getLong(timeColumnIndex);
         long holdTimeRaw = cursor.getLong(holdColumnIndex);
         String jumpTime = "Time: " + formatTime(jumpTimeRaw) + " Hold: " + DateUtils.formatElapsedTime(holdTimeRaw/1000);
-        String refusals = cursor.getString(refusalsColumnIndex);
+        String refusals = "Fence: " + cursor.getString(fenceNumberColumnIndex) + " Refusals: " + cursor.getString(refusalsColumnIndex);
 
         numberTextView.setText(riderNumber);
         divisionTextView.setText(division);
         otherTextView.setText(other);
+        if(other.equals("None")){
+            otherTextView.setTextColor(Color.BLACK);
+        } else {
+            otherTextView.setTextColor(Color.RED);
+        }
         refusalsView.setText(refusals);
         if(editRaw != null)
             editTextView.setText("Edited");
